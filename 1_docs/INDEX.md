@@ -1,10 +1,13 @@
 # Trang chỉ mục tài liệu dự án AutoForm
 
-Chỉ mục tổng hợp toàn bộ các tài liệu thiết kế kỹ thuật, quyết định kiến trúc (ADR), tài liệu nghiên cứu và đặc tả bài toán của hệ thống AutoForm.
+Chỉ mục tổng hợp toàn bộ các tài liệu hướng dẫn sử dụng, thiết kế kỹ thuật, quyết định kiến trúc (ADR), tài liệu nghiên cứu và đặc tả bài toán của hệ thống AutoForm.
 
 ---
 
 ## 📁 Danh mục tài liệu
+
+### 0. Hướng dẫn sử dụng & Vận hành (`USER_GUIDE.md`)
+- 📖 **[USER_GUIDE.md](USER_GUIDE.md)** — Cẩm nang hướng dẫn cài đặt, quản lý Profile và vận hành tự động điền Form từ A-Z.
 
 ### 1. Yêu cầu & Đặc tả bài toán (`01_requirements/`)
 - 📄 [REQUIREMENTS.md](01_requirements/REQUIREMENTS.md) — Đặc tả yêu cầu chức năng và phi chức năng của hệ thống.

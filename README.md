@@ -133,17 +133,18 @@ autoform profiles show default
 
 ## 📖 Chỉ mục tài liệu kỹ thuật (`1_docs/`)
 
-Toàn bộ tài liệu thiết kế hệ thống được viết bằng Tiếng Việt chi tiết tại [1_docs/INDEX.md](1_docs/INDEX.md):
+Toàn bộ tài liệu hướng dẫn và thiết kế hệ thống bằng Tiếng Việt tại [1_docs/INDEX.md](1_docs/INDEX.md):
 
-1. 📄 **[Yêu cầu hệ thống (REQUIREMENTS.md)](1_docs/01_requirements/REQUIREMENTS.md)** — Đặc tả chi tiết các yêu cầu chức năng & phi chức năng.
-2. 📄 **[Kiến trúc hệ thống (ARCHITECTURE.md)](1_docs/02_architecture/ARCHITECTURE.md)** — Mô hình phân tầng Clean Architecture & Sơ đồ luồng dữ liệu.
-3. 📄 **[Nhật ký quyết định (ADR Log)](1_docs/02_architecture/ARCHITECTURE_DECISIONS.md)** — Lý do lựa chọn Playwright, Local-First & Pluggable Adapters.
-4. 📄 **[Thiết kế kỹ thuật (TECHNICAL_DESIGN.md)](1_docs/03_design/TECHNICAL_DESIGN.md)** — Thuật toán trích xuất nhãn 9 tầng & Động cơ ánh xạ.
-5. 📄 **[Thiết kế Schema Form (FORM_SCHEMA.md)](1_docs/03_design/FORM_SCHEMA.md)** — Cấu trúc dữ liệu biểu diễn Form & các Enums.
-6. 📄 **[Engine Tự động điền (AUTOMATION_ENGINE.md)](1_docs/03_design/AUTOMATION_ENGINE.md)** — Chiến lược điền theo loại trường & Phân phối trễ ngẫu nhiên.
-7. 📄 **[Báo cáo Bảo mật (SECURITY.md)](1_docs/05_security/SECURITY.md)** — Nguyên tắc che giấu dữ liệu PII & An toàn dữ liệu nhạy cảm.
-8. 📄 **[Chiến lược Kiểm thử (TEST_STRATEGY.md)](1_docs/06_testing/TEST_STRATEGY.md)** — Cấu trúc test suite & Chuẩn mực bao phủ code.
-9. 📄 **[Lộ trình phát triển (ROADMAP.md)](1_docs/07_ROADMAP.md)** — Tiến độ hoàn thành toàn bộ 12 Phase của dự án.
+1. 📖 **[Cẩm nang Hướng dẫn Sử dụng (USER_GUIDE.md)](1_docs/USER_GUIDE.md)** — Hướng dẫn cài đặt, tạo Profile & vận hành tự động điền Form chi tiết từ A-Z.
+2. 📄 **[Yêu cầu hệ thống (REQUIREMENTS.md)](1_docs/01_requirements/REQUIREMENTS.md)** — Đặc tả chi tiết các yêu cầu chức năng & phi chức năng.
+3. 📄 **[Kiến trúc hệ thống (ARCHITECTURE.md)](1_docs/02_architecture/ARCHITECTURE.md)** — Mô hình phân tầng Clean Architecture & Sơ đồ luồng dữ liệu.
+4. 📄 **[Nhật ký quyết định (ADR Log)](1_docs/02_architecture/ARCHITECTURE_DECISIONS.md)** — Lý do lựa chọn Playwright, Local-First & Pluggable Adapters.
+5. 📄 **[Thiết kế kỹ thuật (TECHNICAL_DESIGN.md)](1_docs/03_design/TECHNICAL_DESIGN.md)** — Thuật toán trích xuất nhãn 9 tầng & Động cơ ánh xạ.
+6. 📄 **[Thiết kế Schema Form (FORM_SCHEMA.md)](1_docs/03_design/FORM_SCHEMA.md)** — Cấu trúc dữ liệu biểu diễn Form & các Enums.
+7. 📄 **[Engine Tự động điền (AUTOMATION_ENGINE.md)](1_docs/03_design/AUTOMATION_ENGINE.md)** — Chiến lược điền theo loại trường & Phân phối trễ ngẫu nhiên.
+8. 📄 **[Báo cáo Bảo mật (SECURITY.md)](1_docs/05_security/SECURITY.md)** — Nguyên tắc che giấu dữ liệu PII & An toàn dữ liệu nhạy cảm.
+9. 📄 **[Chiến lược Kiểm thử (TEST_STRATEGY.md)](1_docs/06_testing/TEST_STRATEGY.md)** — Cấu trúc test suite & Chuẩn mực bao phủ code.
+10. 📄 **[Lộ trình phát triển (ROADMAP.md)](1_docs/07_ROADMAP.md)** — Tiến độ hoàn thành toàn bộ 12 Phase của dự án.
 
 ---
 
