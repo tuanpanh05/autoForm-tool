@@ -1,4 +1,4 @@
-"""CLI application for AutoForm."""
+"""CLI application for AutoForm with Vietnamese UI."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def _print_banner() -> None:
     console.print(
         Panel(
             banner,
-            subtitle="Intelligent Form Auto-Fill Tool",
+            subtitle="Công cụ tự động điền Form thông minh (Intelligent Form Auto-Fill Tool)",
             border_style="blue",
             padding=(1, 4),
         )
@@ -39,14 +39,14 @@ def _print_banner() -> None:
 def _print_menu() -> None:
     """Print the main menu."""
     menu_items = [
-        ("1", "Fill Form", "Auto-fill a web form"),
-        ("2", "Profile", "Manage your user profile"),
-        ("3", "Settings", "Configure AutoForm"),
-        ("0", "Exit", "Exit AutoForm"),
+        ("1", "Tự động điền Form", "Phân tích và điền biểu mẫu trực tuyến"),
+        ("2", "Quản lý Profile", "Xem, tạo mới hoặc chỉnh sửa hồ sơ cá nhân"),
+        ("3", "Cài đặt hệ thống", "Cấu hình tham số ứng dụng AutoForm"),
+        ("0", "Thoát ứng dụng", "Đóng chương trình AutoForm"),
     ]
 
     for key, title, description in menu_items:
-        console.print(f"  [bold cyan][{key}][/bold cyan]  {title:<15} [dim]{description}[/dim]")
+        console.print(f"  [bold cyan][{key}][/bold cyan]  {title:<22} [dim]{description}[/dim]")
 
     console.print()
 
@@ -57,9 +57,9 @@ async def _handle_fill_form(config: Config) -> None:
     from autoform.cli.display import display_fill_result, display_form_info, display_mapping_table
     from autoform.domain.enums import ConfidenceLevel
 
-    url = Prompt.ask("[bold]Enter form URL[/bold]")
+    url = Prompt.ask("[bold]Nhập địa chỉ URL biểu mẫu (Form URL)[/bold]")
     if not url:
-        console.print("[red]URL is required.[/red]")
+        console.print("[red]Vui lòng nhập đường dẫn URL.[/red]")
         return
 
     orchestrator = Orchestrator(config)
@@ -71,25 +71,25 @@ async def _handle_fill_form(config: Config) -> None:
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Analyzing form...", total=None)
+            task = progress.add_task("Đang phân tích cấu trúc Form...", total=None)
             schema, mappings, profile = await orchestrator.analyze_form(url)
-            progress.update(task, description="✅ Analysis complete!")
+            progress.update(task, description="✅ Phân tích biểu mẫu hoàn tất!")
 
         # Step 2: Display results
         display_form_info(schema)
         display_mapping_table(mappings)
 
         # Step 3: Review
-        console.print("[bold]Review Options:[/bold]")
-        console.print("  [cyan]a[/cyan] - Accept all HIGH confidence mappings")
-        console.print("  [cyan]r[/cyan] - Review each mapping individually")
-        console.print("  [cyan]q[/cyan] - Cancel and close browser")
+        console.print("[bold]Các tùy chọn duyệt (Review Options):[/bold]")
+        console.print("  [cyan]a[/cyan] - Tự động chấp nhận tất cả các trường có độ tin cậy CAO (HIGH)")
+        console.print("  [cyan]r[/cyan] - Xem và phê duyệt thủ công từng trường riêng biệt")
+        console.print("  [cyan]q[/cyan] - Hủy bỏ và đóng trình duyệt")
         console.print()
 
-        choice = Prompt.ask("Choose", choices=["a", "r", "q"], default="a")
+        choice = Prompt.ask("Lựa chọn của bạn", choices=["a", "r", "q"], default="a")
 
         if choice == "q":
-            console.print("[dim]Cancelled.[/dim]")
+            console.print("[dim]Đã hủy bỏ.[/dim]")
             await orchestrator.close()
             return
 
@@ -97,7 +97,7 @@ async def _handle_fill_form(config: Config) -> None:
             # Auto-approve HIGH confidence
             Orchestrator.auto_approve_high_confidence(mappings)
             approved = sum(1 for m in mappings if m.approved)
-            console.print(f"[green]Auto-approved {approved} HIGH confidence mappings.[/green]")
+            console.print(f"[green]Đã tự động phê duyệt {approved} trường có độ tin cậy CAO.[/green]")
 
         elif choice == "r":
             # Individual review
@@ -116,19 +116,19 @@ async def _handle_fill_form(config: Config) -> None:
                     f"({mapping.confidence:.0%})"
                 )
 
-                approve = Confirm.ask("    Approve?", default=(level == ConfidenceLevel.HIGH))
+                approve = Confirm.ask("    Phê duyệt trường này?", default=(level == ConfidenceLevel.HIGH))
                 mapping.approved = approve
 
         # Step 4: Fill
         approved_count = sum(1 for m in mappings if m.approved)
         if approved_count == 0:
-            console.print("[yellow]No mappings approved. Nothing to fill.[/yellow]")
+            console.print("[yellow]Không có trường nào được phê duyệt. Hủy thao tác điền.[/yellow]")
             await orchestrator.close()
             return
 
         console.print()
-        if not Confirm.ask(f"[bold]Fill {approved_count} fields?[/bold]", default=True):
-            console.print("[dim]Cancelled.[/dim]")
+        if not Confirm.ask(f"[bold]Bắt đầu tự động điền {approved_count} trường đã chọn?[/bold]", default=True):
+            console.print("[dim]Đã hủy thao tác điền.[/dim]")
             await orchestrator.close()
             return
 
@@ -137,30 +137,30 @@ async def _handle_fill_form(config: Config) -> None:
             TextColumn("[progress.description]{task.description}"),
             console=console,
         ) as progress:
-            task = progress.add_task("Filling form...", total=None)
+            task = progress.add_task("Đang tự động điền dữ liệu vào Form...", total=None)
             fill_result = await orchestrator.fill_form(mappings)
-            progress.update(task, description="✅ Fill complete!")
+            progress.update(task, description="✅ Đã điền xong biểu mẫu!")
 
         console.print()
         display_fill_result(fill_result)
 
         # Step 5: Submit?
-        if Confirm.ask("[bold yellow]Submit the form?[/bold yellow]", default=False):
+        if Confirm.ask("[bold yellow]Bạn có muốn thực hiện NỘP FORM (Submit) không?[/bold yellow]", default=False):
             submit_result = await orchestrator.submit_form(confirmed=True)
             if submit_result.success:
-                console.print("[bold green]✅ Form submitted successfully![/bold green]")
+                console.print("[bold green]✅ Đã Nộp Form thành công![/bold green]")
             elif submit_result.needs_human_action:
                 console.print(f"[bold yellow]⚠️  {submit_result.reason}[/bold yellow]")
             else:
-                console.print(f"[bold red]❌ Submit failed: {submit_result.reason}[/bold red]")
+                console.print(f"[bold red]❌ Nộp Form thất bại: {submit_result.reason}[/bold red]")
         else:
-            console.print("[dim]Form not submitted. Browser remains open for manual review.[/dim]")
-            Prompt.ask("[dim]Press Enter to close browser[/dim]")
+            console.print("[dim]Không nộp Form. Trình duyệt được giữ nguyên để bạn kiểm tra thủ công.[/dim]")
+            Prompt.ask("[dim]Nhấn Enter để đóng trình duyệt[/dim]")
 
         await orchestrator.close()
 
     except Exception as e:
-        console.print(f"[bold red]Error: {e}[/bold red]")
+        console.print(f"[bold red]Lỗi hệ thống: {e}[/bold red]")
         await orchestrator.close()
 
 
@@ -173,15 +173,15 @@ async def _handle_profile(config: Config) -> None:
     manager = ProfileManager(storage)
 
     console.print()
-    console.print("[bold]Profile Management[/bold]")
-    console.print("  [cyan]1[/cyan] - View current profile")
-    console.print("  [cyan]2[/cyan] - Create new profile")
-    console.print("  [cyan]3[/cyan] - Edit profile field")
-    console.print("  [cyan]4[/cyan] - List all profiles")
-    console.print("  [cyan]0[/cyan] - Back to main menu")
+    console.print("[bold]Quản Lý Hồ Sơ Người Dùng (Profile Management)[/bold]")
+    console.print("  [cyan]1[/cyan] - Xem thông tin profile hiện tại")
+    console.print("  [cyan]2[/cyan] - Tạo profile mới")
+    console.print("  [cyan]3[/cyan] - Chỉnh sửa trường trong profile")
+    console.print("  [cyan]4[/cyan] - Danh sách tất cả các profile")
+    console.print("  [cyan]0[/cyan] - Quay lại Menu chính")
     console.print()
 
-    choice = Prompt.ask("Choose", choices=["0", "1", "2", "3", "4"], default="1")
+    choice = Prompt.ask("Lựa chọn của bạn", choices=["0", "1", "2", "3", "4"], default="1")
 
     if choice == "0":
         return
@@ -190,7 +190,7 @@ async def _handle_profile(config: Config) -> None:
         # View profile
         profile_name = config.get("profile", "default_profile", "default")
         if not manager.profile_exists(profile_name):
-            console.print(f"[yellow]No profile '{profile_name}' found.[/yellow]")
+            console.print(f"[yellow]Không tìm thấy Profile '{profile_name}'.[/yellow]")
             return
 
         profile = manager.get_profile(profile_name)
@@ -198,9 +198,9 @@ async def _handle_profile(config: Config) -> None:
 
         from rich.table import Table
 
-        table = Table(title=f"Profile: {profile_name}", show_lines=True, border_style="dim")
-        table.add_column("Field", style="cyan")
-        table.add_column("Value", style="white")
+        table = Table(title=f"Hồ Sơ: {profile_name}", show_lines=True, border_style="dim")
+        table.add_column("Đường dẫn Trường", style="cyan")
+        table.add_column("Giá trị Dữ liệu", style="white")
 
         for path, value in sorted(all_fields.items()):
             display_value = str(value) if value else "[dim]—[/dim]"
@@ -212,48 +212,47 @@ async def _handle_profile(config: Config) -> None:
         # Interactive profile creation
         from autoform.profile.manager import PROFILE_SCHEMA
 
-        console.print("[bold]Create New Profile[/bold]")
-        console.print("[dim]Press Enter to skip optional fields.[/dim]\n")
+        console.print("[bold]Tạo Hồ Sơ Mới (Create New Profile)[/bold]")
+        console.print("[dim]Nhấn Enter để bỏ qua các trường không bắt buộc.[/dim]\n")
 
-        profile_name = Prompt.ask("Profile name", default="default")
+        profile_name = Prompt.ask("Tên Profile mới", default="default")
         data: dict[str, dict[str, Any]] = {}
 
         for category, fields in PROFILE_SCHEMA.items():
-            console.print(f"\n[bold cyan]— {category.title()} —[/bold cyan]")
+            console.print(f"\n[bold cyan]— Danh mục: {category.title()} —[/bold cyan]")
             data[category] = {}
 
             for field_name, description in fields.items():
                 value = Prompt.ask(f"  {description}", default="")
                 if value:
-                    # Handle comma-separated lists
                     if "comma-separated" in description.lower():
                         value = [v.strip() for v in value.split(",")]
                     data[category][field_name] = value
 
         profile = manager.create_profile(data, profile_name)
-        console.print(f"\n[green]✅ Profile '{profile_name}' created![/green]")
+        console.print(f"\n[green]✅ Đã tạo thành công Profile '{profile_name}'![/green]")
         summary = manager.get_profile_summary(profile_name)
         total = sum(summary.values())
-        console.print(f"[dim]Fields filled: {total}[/dim]")
+        console.print(f"[dim]Tổng số trường đã nhập: {total}[/dim]")
 
     elif choice == "3":
         # Edit field
-        profile_name = Prompt.ask("Profile name", default="default")
+        profile_name = Prompt.ask("Tên Profile cần sửa", default="default")
         if not manager.profile_exists(profile_name):
-            console.print(f"[red]Profile '{profile_name}' not found.[/red]")
+            console.print(f"[red]Không tìm thấy Profile '{profile_name}'.[/red]")
             return
 
-        field_path = Prompt.ask("Field path (e.g. personal.full_name)")
-        value = Prompt.ask("New value")
+        field_path = Prompt.ask("Đường dẫn trường (ví dụ: personal.full_name)")
+        value = Prompt.ask("Giá trị mới")
 
         manager.update_field(profile_name, field_path, value)
-        console.print(f"[green]✅ Updated {field_path}[/green]")
+        console.print(f"[green]✅ Đã cập nhật thành công {field_path}[/green]")
 
     elif choice == "4":
         # List profiles
         profiles = manager.list_profiles()
         if not profiles:
-            console.print("[yellow]No profiles found.[/yellow]")
+            console.print("[yellow]Chưa có Profile nào trong hệ thống.[/yellow]")
         else:
             for p in profiles:
                 console.print(f"  • {p}")
@@ -279,18 +278,18 @@ def main() -> None:
             return
         if arg in ("--help", "-h"):
             _print_banner()
-            console.print("[bold]Usage:[/bold]  autoform [command]")
+            console.print("[bold]Cú pháp sử dụng:[/bold]  autoform [command]")
             console.print()
-            console.print("[bold]Commands:[/bold]")
-            console.print("  (interactive)   Run interactive menu")
-            console.print("  --version, -v   Show version")
-            console.print("  --help, -h      Show this help")
+            console.print("[bold]Danh sách câu lệnh:[/bold]")
+            console.print("  (interactive)   Khởi chạy Menu tương tác")
+            console.print("  --version, -v   Hiển thị phiên bản")
+            console.print("  --help, -h      Hiển thị trợ giúp")
             console.print()
             return
 
     # Interactive mode
     _print_banner()
-    console.print("[dim]Type a number to select an option, or 0 to exit.[/dim]")
+    console.print("[dim]Nhập số để lựa chọn chức năng, hoặc 0 để thoát chương trình.[/dim]")
     console.print()
     _print_menu()
 
@@ -299,22 +298,22 @@ def main() -> None:
             choice = console.input("[bold blue]>[/bold blue] ").strip()
 
             if choice == "0":
-                console.print("[dim]Goodbye! 👋[/dim]")
+                console.print("[dim]Cảm ơn bạn đã sử dụng AutoForm! Tạm biệt! 👋[/dim]")
                 break
             elif choice == "1":
                 asyncio.run(_handle_fill_form(config))
             elif choice == "2":
                 asyncio.run(_handle_profile(config))
             elif choice == "3":
-                console.print("[yellow]Settings editor coming soon...[/yellow]")
+                console.print("[yellow]Chức năng chỉnh sửa cài đặt đang được phát triển...[/yellow]")
             else:
-                console.print("[red]Invalid option. Please try again.[/red]")
+                console.print("[red]Lựa chọn không hợp lệ. Vui lòng thử lại.[/red]")
 
             console.print()
             _print_menu()
 
         except (KeyboardInterrupt, EOFError):
-            console.print("\n[dim]Goodbye! 👋[/dim]")
+            console.print("\n[dim]Tạm biệt! 👋[/dim]")
             break
 
 
