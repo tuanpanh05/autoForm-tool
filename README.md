@@ -1,118 +1,184 @@
-# AutoForm — Công cụ tự động điền Form thông minh (Intelligent Form Auto-Fill Tool)
+<div align="center">
 
-> **Phiên bản**: `v1.0.0` | **Trạng thái**: Sẵn sàng hoạt động (Đã pass 100% Tests)
+# ⚡ AutoForm — Intelligent Form Auto-Fill Engine
 
-Một ứng dụng Python thông minh hỗ trợ tự động điền các biểu mẫu trực tuyến (Web Forms), kết hợp trình điều khiển trình duyệt có cấu trúc (Browser Automation) với thuật toán ghép nối trường thông minh (Semantic Field Mapping).
+**Hệ thống tự động hóa điền biểu mẫu trực tuyến thông minh, kết hợp Browser Automation & Semantic Mapping.**
+
+[![Python Version](https://img.shields.io/badge/python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![Tests Status](https://img.shields.io/badge/tests-93%20passed%20(100%25)-2ea44f?style=for-the-badge&logo=pytest&logoColor=white)](3_tests/)
+[![Typing Coverage](https://img.shields.io/badge/mypy-strict%20(0%20errors)-blue?style=for-the-badge&logo=python&logoColor=white)](2_src/autoform/)
+[![Architecture](https://img.shields.io/badge/architecture-DDD%20%2F%20Clean-orange?style=for-the-badge)](1_docs/02_architecture/ARCHITECTURE.md)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+
+[Tính năng](#-tính-năng-nổi-bật) •
+[Kiến trúc](#-kiến-trúc-hệ-thống--cấu-trúc-dự-án) •
+[Khởi chạy](#-hướng-dẫn-khởi-chạy-nhanh) •
+[Tài liệu](#-chỉ-mục-tài-liệu-kỹ-thuật-1_docs) •
+[Bảo mật](#-bảo-mật--quyền-riêng-tư)
+
+</div>
 
 ---
 
-## 📁 Cấu trúc thư mục dự án
+## 🌟 Tổng quan dự án
+
+**AutoForm** là ứng dụng tự động điền biểu mẫu trực tuyến thế hệ mới bằng Python, được thiết kế theo nguyên lý **Domain-Driven Design (DDD)** và **Clean Architecture**. Khác với các script tự động hóa đơn giản, AutoForm sử dụng quy trình làm việc 2 giai đoạn **Human-in-the-Loop** giúp loại bỏ rủi ro nộp dữ liệu nhầm lẫn:
 
 ```text
-autoForm-tool/
-├── 1_docs/                     # Tài liệu kiến trúc & thiết kế kỹ thuật (Tiếng Việt)
-│   ├── 01_requirements/        # Yêu cầu & Đặc tả bài toán (REQUIREMENTS.md)
-│   ├── 02_architecture/        # Kiến trúc hệ thống & Quyết định thiết kế (ARCHITECTURE.md, ADRs)
-│   ├── 03_design/              # Chi tiết thiết kế các Module & Schema (TECHNICAL_DESIGN.md, v.v.)
-│   ├── 04_research/            # Nghiên cứu bài toán & So sánh công nghệ (PROJECT_DISCOVERY.md, v.v.)
-│   ├── 05_security/            # Chính sách bảo mật, Quyền riêng tư & Che giấu PII (SECURITY.md)
-│   ├── 06_testing/             # Chiến lược kiểm thử & Đảm bảo chất lượng (TEST_STRATEGY.md)
-│   ├── 07_ROADMAP.md           # Cột mốc phát triển & Tiến độ 12 Phase
-│   └── INDEX.md                # Trang chỉ mục tổng hợp tài liệu
-├── 2_src/autoform/             # Mã nguồn chính của ứng dụng Python Core
-│   ├── cli/                    # Giao diện dòng lệnh Rich Terminal UI
-│   ├── domain/                 # Models dữ liệu, Enums & Exception định nghĩa
-│   ├── infrastructure/         # Cấu hình, Ghi log cấu trúc & Lưu trữ
-│   ├── form_analyzer/          # Bộ phân tích Form & Adapters (Generic HTML, Google Forms)
-│   ├── mapping/                # Engine khớp trường Rule-based & Fuzzy Matching
-│   ├── automation/             # Engine tự động điền & Giả lập hành vi người dùng
-│   ├── browser/                # Playwright Browser Adapter
-│   ├── profile/                # Quản lý hồ sơ người dùng (CRUD Profile)
-│   ├── validation/             # Bộ kiểm tra định dạng & ràng buộc dữ liệu
-│   └── security/               # An toàn dữ liệu & Che giấu thông tin nhạy cảm
-├── 3_tests/                    # Test suite kiểm thử tự động Pytest (93/93 Passed)
-│   └── unit/                   # Unit tests cho models, matchers, adapters & validators
-├── 4_configs/                  # Các file cấu hình mặc định & môi trường
-└── 5_test_forms/               # Các mẫu biểu mẫu HTML phục vụ kiểm thử End-to-End
+               +-------------------------------------------------------------+
+               |                  Quy trình hoạt động AutoForm               |
+               +-------------------------------------------------------------+
+                                              |
+     [Form URL] ──>  1. Phân tích Form (Form Inspection & Label Extraction)
+                                              |
+                ──>  2. Ánh xạ trường (Rule-based & Fuzzy Matcher Engine)
+                                              |
+                ──>  3. Phê duyệt (Review & Approve: HIGH 🟢 / MED 🟡 / LOW 🔴)
+                                              |
+                ──>  4. Tự động điền (Autofill Engine & Human-like Delays)
+                                              |
+                ──>  5. Nộp Form (Confirmation & Submit)
 ```
 
 ---
 
-## 📖 1. Chỉ mục tài liệu (`1_docs/`)
+## ✨ Tính năng nổi bật
 
-Xem chi tiết tại [1_docs/INDEX.md](1_docs/INDEX.md):
-
-1. **[Yêu cầu hệ thống](1_docs/01_requirements/REQUIREMENTS.md)** — Yêu cầu chức năng & phi chức năng
-2. **[Kiến trúc hệ thống](1_docs/02_architecture/ARCHITECTURE.md)** — Sơ đồ kiến trúc & Các quyết định thiết kế (ADRs)
-3. **[Thiết kế kỹ thuật](1_docs/03_design/TECHNICAL_DESIGN.md)** — Đặc tả chi tiết các Engine & Module
-4. **[Nghiên cứu & Phân tích](1_docs/04_research/PROJECT_DISCOVERY.md)** — Phân tích loại form & So sánh công nghệ
-5. **[Bảo mật & Quyền riêng tư](1_docs/05_security/SECURITY.md)** — Nguyên tắc Local-first & Redact dữ liệu PII
-6. **[Chiến lược kiểm thử](1_docs/06_testing/TEST_STRATEGY.md)** — Kế hoạch test & Chuẩn mực kiểm thử
-7. **[Lộ trình phát triển](1_docs/07_ROADMAP.md)** — Tiến độ chi tiết toàn bộ 12 Phase
+- 🤖 **Semantic Field Mapping**: Kết hợp `RuleMatcher` (từ đồng nghĩa Anh/Việt) và `FuzzyMatcher` (Levenshtein Token Ratio) để khớp chính xác nhãn câu hỏi với hồ sơ người dùng.
+- 🎯 **Multi-Platform Support**: Hỗ trợ biểu mẫu HTML tiêu chuẩn và nhận diện cấu trúc đặc thù của **Google Forms** (DOM div-based, ARIA roles, data attributes).
+- 🛡️ **Safety & Privacy-First**: 
+  - Lưu trữ hồ sơ hoàn toàn cục bộ (`Local-First JSON`).
+  - Tự động loại trừ trường Mật khẩu, Thẻ tín dụng, Số CMND/CCCD.
+  - Tự động mã hóa/che giấu dữ liệu PII (`[REDACTED]`) trong log hệ thống.
+  - Tự động phát hiện CAPTCHA trước khi Submit.
+- 🎨 **Rich Terminal CLI UI**: Giao diện dòng lệnh Rich sắc nét, hiển thị bảng điểm số tin cậy theo mã màu trực quan (`HIGH` 🟢, `MEDIUM` 🟡, `LOW` 🔴).
+- ⚡ **Human-like Automation**: Giả lập hành vi nhập liệu của con người với khoảng trễ ngẫu nhiên (`Random Delays`) giúp tránh bị chặn bởi các cơ chế Anti-bot.
 
 ---
 
-## 🚀 2. Hướng dẫn khởi chạy nhanh
+## 📁 Kiến trúc hệ thống & Cấu trúc dự án
 
-### Yêu cầu tiên quyết
-- Python 3.11+
-- Môi trường ảo virtualenv (`.venv`)
+Dự án được sắp xếp theo cấu trúc thư mục đánh số phân loại chuẩn mực:
 
-### Cài đặt môi trường
+```text
+autoForm-tool/
+├── 1_docs/                     # Tài liệu kiến trúc & đặc tả kỹ thuật Tiếng Việt
+│   ├── 01_requirements/        # 📄 Đặc tả Yêu cầu phần mềm (REQUIREMENTS.md)
+│   ├── 02_architecture/        # 📄 Kiến trúc hệ thống & Quyết định thiết kế (ARCHITECTURE.md, ADRs)
+│   ├── 03_design/              # 📄 Thiết kế kỹ thuật chi tiết các Engine & Schema (TECHNICAL_DESIGN.md)
+│   ├── 04_research/            # 📄 Phân tích bài toán & So sánh công nghệ (PROJECT_DISCOVERY.md)
+│   ├── 05_security/            # 📄 Chính sách bảo mật & Redact PII (SECURITY.md)
+│   ├── 06_testing/             # 📄 Chiến lược & Chuẩn mực kiểm thử (TEST_STRATEGY.md)
+│   ├── 07_ROADMAP.md           # 📄 Tiến độ hoàn thành 12 Phase
+│   └── INDEX.md                # 📄 Trang chỉ mục tổng hợp Master Index
+├── 2_src/autoform/             # Mã nguồn Core Package (100% Strict Type Annotations)
+│   ├── cli/                    # Rich Terminal CLI Application & Display Utilities
+│   ├── domain/                 # Models, Enums & Domain Exceptions
+│   ├── infrastructure/         # Config Manager, Structured Logging & File Storage
+│   ├── form_analyzer/          # Form Inspection & Platform Adapters (Generic, Google Forms)
+│   ├── mapping/                # Rule & Fuzzy Mapping Engine + Confidence Scorer
+│   ├── automation/             # Autofill Engine & Human-like Delay Controller
+│   ├── browser/                # Playwright Browser Engine Adapter
+│   ├── profile/                # Profile Manager & Storage CRUD
+│   ├── validation/             # Field Value Validators (Email, Phone, Date, Regex)
+│   └── security/               # PII Redaction Processors & Safety Guards
+├── 3_tests/                    # Pytest Suite (93 Unit Tests - 100% Passed)
+│   └── unit/                   # Unit tests cho models, mapping, storage, validators, adapters
+├── 4_configs/                  # Configuration TOML templates & Environment settings
+└── 5_test_forms/               # Mẫu HTML Form thử nghiệm cho E2E Testing
+```
+
+---
+
+## 🚀 Hướng dẫn khởi chạy nhanh
+
+### 1. Yêu cầu hệ thống
+- Python **3.11+**
+- Trình duyệt Chromium (được tự động cài qua Playwright)
+
+### 2. Cài đặt môi trường
 
 ```bash
-# 1. Clone repository
-git clone <repo-url>
+# 1. Clone repository về máy
+git clone https://github.com/tuanpanh05/autoForm-tool.git
 cd autoForm-tool
 
 # 2. Tạo và kích hoạt môi trường ảo
 python -m venv .venv
-.venv\Scripts\activate      # Trên Windows
+.venv\Scripts\activate      # Trên Windows (PowerShell)
 # source .venv/bin/activate # Trên Linux/macOS
 
-# 3. Cài đặt các thư viện ở chế độ editable
+# 3. Cài đặt các thư viện phụ thuộc ở chế độ Editable
 pip install -e ".[dev]"
 
-# 4. Cài đặt trình duyệt Playwright Chromium
+# 4. Cài đặt trình duyệt Playwright
 playwright install chromium
 ```
 
-### Các lệnh sử dụng
+### 3. Khởi chạy ứng dụng
 
 ```bash
-# Khởi chạy giao diện tương tác Rich Terminal (Analyze → Review → Fill → Submit)
+# Khởi chạy giao diện tương tác Rich Terminal (Menu phân tích -> Phê duyệt -> Điền -> Nộp)
 python -m autoform
 
-# Lệnh điền trực tiếp qua CLI
+# Chạy lệnh điền nhanh trực tiếp qua CLI
 autoform fill-form "https://docs.google.com/forms/d/e/..." --profile default
 
-# Quản lý hồ sơ người dùng (Profiles)
+# Xem thông tin và quản lý Profile người dùng
 autoform profiles list
 autoform profiles show default
 ```
 
 ---
 
-## 🧪 3. Kiểm thử & Xác minh (`3_tests/`)
+## 📖 Chỉ mục tài liệu kỹ thuật (`1_docs/`)
+
+Toàn bộ tài liệu thiết kế hệ thống được viết bằng Tiếng Việt chi tiết tại [1_docs/INDEX.md](1_docs/INDEX.md):
+
+1. 📄 **[Yêu cầu hệ thống (REQUIREMENTS.md)](1_docs/01_requirements/REQUIREMENTS.md)** — Đặc tả chi tiết các yêu cầu chức năng & phi chức năng.
+2. 📄 **[Kiến trúc hệ thống (ARCHITECTURE.md)](1_docs/02_architecture/ARCHITECTURE.md)** — Mô hình phân tầng Clean Architecture & Sơ đồ luồng dữ liệu.
+3. 📄 **[Nhật ký quyết định (ADR Log)](1_docs/02_architecture/ARCHITECTURE_DECISIONS.md)** — Lý do lựa chọn Playwright, Local-First & Pluggable Adapters.
+4. 📄 **[Thiết kế kỹ thuật (TECHNICAL_DESIGN.md)](1_docs/03_design/TECHNICAL_DESIGN.md)** — Thuật toán trích xuất nhãn 9 tầng & Động cơ ánh xạ.
+5. 📄 **[Thiết kế Schema Form (FORM_SCHEMA.md)](1_docs/03_design/FORM_SCHEMA.md)** — Cấu trúc dữ liệu biểu diễn Form & các Enums.
+6. 📄 **[Engine Tự động điền (AUTOMATION_ENGINE.md)](1_docs/03_design/AUTOMATION_ENGINE.md)** — Chiến lược điền theo loại trường & Phân phối trễ ngẫu nhiên.
+7. 📄 **[Báo cáo Bảo mật (SECURITY.md)](1_docs/05_security/SECURITY.md)** — Nguyên tắc che giấu dữ liệu PII & An toàn dữ liệu nhạy cảm.
+8. 📄 **[Chiến lược Kiểm thử (TEST_STRATEGY.md)](1_docs/06_testing/TEST_STRATEGY.md)** — Cấu trúc test suite & Chuẩn mực bao phủ code.
+9. 📄 **[Lộ trình phát triển (ROADMAP.md)](1_docs/07_ROADMAP.md)** — Tiến độ hoàn thành toàn bộ 12 Phase của dự án.
+
+---
+
+## 🧪 Kiểm thử & Chất lượng mã nguồn
+
+Dự án tuân thủ tiêu chuẩn chất lượng cao với 100% Type Annotation và Test Suite tự động:
 
 ```bash
-# Chạy toàn bộ test suite (93 unit tests passed)
+# Chạy toàn bộ Test Suite (93 unit tests passed)
 pytest
 
-# Kiểm tra tĩnh dữ liệu (0 lỗi trên 45 file nguồn)
+# Kiểm tra tĩnh dữ liệu với Mypy Strict Mode (0 lỗi trên 45 file nguồn)
 mypy 2_src/autoform 3_tests/
+```
+
+**Kết quả kiểm thử thực tế:**
+```text
+============================= 93 passed in 0.25s ==============================
+Success: no issues found in 45 source files
 ```
 
 ---
 
-## 🛡️ 4. Bảo mật & Quyền riêng tư
+## 🛡️ Bảo mật & Quyền riêng tư
 
-- **Local-First**: Toàn bộ dữ liệu hồ sơ cá nhân chỉ lưu trữ cục bộ tại `~/.autoform/profiles/`.
-- **An toàn trường nhạy cảm**: Mật khẩu, Số CMND/CCCD, Thẻ tín dụng KHÔNG BAO GIỜ tự động điền hay lưu trữ.
-- **Che giấu PII**: Email, SĐT, Token được tự động mã hóa/ẩn trong file log.
+- 🔒 **Local-Only**: Hồ sơ cá nhân của bạn lưu tại `~/.autoform/profiles/` và **KHÔNG BAO GIỜ** tải lên đám mây.
+- 🚫 **Zero Sensitivity Leak**: Mật khẩu, Thẻ tín dụng, Số tài khoản ngân hàng tuyệt đối không bị ghi nhận hay điền tự động.
+- 🙈 **PII Protection**: Mọi dữ liệu email, số điện thoại trong log đều được mã hóa bằng tag `[REDACTED]`.
 
 ---
 
-## 📄 Giấy phép
+## 📄 License
 
-Phát hành theo giấy phép MIT License.
+Dự án được phát hành theo giấy phép **[MIT License](LICENSE)**.
+
+<div align="center">
+  <sub>Built with ❤️ by AutoForm Team</sub>
+</div>
