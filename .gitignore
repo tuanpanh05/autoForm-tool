@@ -1,0 +1,44 @@
+# Environment
+.env
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Security — NEVER commit these
+profiles/
+*.profile
+*.key
+*.pem
+
+# User data
+logs/
+cache/
+screenshots/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Playwright
+playwright-report/
+test-results/

@@ -1,0 +1,73 @@
+# AutoForm Default Configuration
+
+[general]
+app_name = "AutoForm"
+version = "1.0.0-dev"
+data_dir = "~/.autoform"  # Expanded at runtime
+
+[browser]
+type = "chromium"          # chromium, firefox, webkit
+headless = false           # Show browser window
+timeout_ms = 30000         # Default timeout
+viewport_width = 1280
+viewport_height = 720
+
+[automation]
+min_field_delay_ms = 100   # Min delay between filling fields
+max_field_delay_ms = 300   # Max delay between filling fields
+min_click_delay_ms = 200   # Min delay before clicks
+max_click_delay_ms = 500   # Max delay before clicks
+submit_delay_ms = 1000     # Delay before submit click
+max_retries = 2            # Max retries per field fill
+retry_delay_ms = 500       # Delay between retries
+
+[confidence]
+high_threshold = 0.85      # >= this = auto-fill
+medium_threshold = 0.60    # >= this = suggest with confirm
+low_threshold = 0.30       # >= this = show but don't recommend
+# < low_threshold = no match
+
+[mapping]
+enable_rules = true
+enable_fuzzy = true
+enable_embedding = false   # Requires 'ai' extra
+enable_llm = false         # Requires 'ai' extra + API key
+fuzzy_min_score = 60       # Minimum fuzzy match score (0-100)
+
+[profile]
+storage_format = "json"    # json (MVP), encrypted_json (v1.1)
+default_profile = "default"
+
+[logging]
+level = "INFO"             # DEBUG, INFO, WARNING, ERROR
+format = "console"         # console, json
+log_dir = "~/.autoform/logs"
+redact_pii = true
+max_log_files = 7          # Keep last 7 days
+
+[cache]
+enabled = true
+cache_dir = "~/.autoform/cache"
+ttl_hours = 24             # Cache TTL in hours
+
+[ai]
+enabled = false
+provider = "local"         # local, openai, anthropic
+send_labels = true
+send_field_types = true
+send_profile_paths = true
+send_values = false        # NEVER by default
+send_url = false
+
+[ai.local]
+embedding_model = "all-MiniLM-L6-v2"
+
+[ai.openai]
+model = "gpt-4o-mini"
+temperature = 0.0
+max_tokens = 200
+
+[ai.anthropic]
+model = "claude-3-5-haiku-latest"
+temperature = 0.0
+max_tokens = 200

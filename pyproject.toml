@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autoform"
+version = "1.0.0-dev"
+description = "Intelligent form auto-fill tool with semantic field mapping"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "AutoForm Team"}
+]
+keywords = ["automation", "form-filling", "browser-automation", "playwright"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+
+dependencies = [
+    "playwright>=1.40.0",
+    "rich>=13.0.0",
+    "rapidfuzz>=3.0.0",
+    "structlog>=23.0.0",
+    "python-dotenv>=1.0.0",
+    "tomli>=2.0.0; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+ai = [
+    "sentence-transformers>=2.2.0",
+    "openai>=1.0.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-playwright>=0.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.4.0",
+]
+
+[project.scripts]
+autoform = "autoform.cli.app:main"
+
+[tool.setuptools.packages.find]
+where = ["2_src"]
+
+[tool.pytest.ini_options]
+testpaths = ["3_tests"]
+asyncio_mode = "auto"
+markers = [
+    "unit: Unit tests (fast, no external dependencies)",
+    "integration: Integration tests (may use browser)",
+    "e2e: End-to-end tests (full workflow)",
+    "google_forms: Tests against Google Forms (requires network)",
+    "manual: Tests that must be run manually",
+]
+
+[tool.coverage.run]
+source = ["2_src/autoform"]
+omit = ["3_tests/*"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["2_src", "3_tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM", "TCH"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
